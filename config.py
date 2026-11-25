@@ -9,8 +9,8 @@ PROCESSED_DIR = DATA_DIR / "processed"
 LABELS_PATH = PROCESSED_DIR / "labels.json"
 
 MODELS_DIR = ROOT / "models"
-ML_MODEL_PATH = MODELS_DIR / "ml" / "tfidf_logreg.joblib"
-BERT_DIR = MODELS_DIR / "bert"
+ML_MODEL_PATH = MODELS_DIR / "ml_model" / "tfidf_logreg.joblib"
+BERT_DIR = MODELS_DIR / "dl_model"
 
 REPORTS_DIR = ROOT / "reports"
 
@@ -85,6 +85,8 @@ CATEGORY_NAMES = {
     "stat.ML": "Machine Learning (Statistics)",
     "stat.TH": "Statistics Theory",
     "astro-ph.IM": "Astronomy Instrumentation and Methods",
+    "astro-ph.EP": "Earth and Planetary Astrophysics",
+    "cond-mat.mtrl-sci": "Materials Science",
     "cs.NA": "Numerical Analysis (CS)",
 }
 

@@ -118,7 +118,7 @@ git push
 
 `data/` is ignored by git; `models/` and `reports/` are committed.
 
-> Note: `models/ml/tfidf_logreg.joblib` is a pickle file. Only load model files from sources you trust.
+> Note: `models/ml_model/tfidf_logreg.joblib` is a pickle file. Only load model files from sources you trust.
 
 ---
 
@@ -137,7 +137,8 @@ tagger.py         loads the models, suggest(title, abstract)
 suggest_tags.py   command-line tag suggestions
 app.py            Streamlit demo
 Dockerfile        CPU image for the demo
-models/           trained models (committed)
+models/ml_model/  Model 1 files: TF-IDF + Logistic Regression (committed)
+models/dl_model/  Model 2 files: fine-tuned MiniLM weights, tokenizer, config (committed)
 reports/          test metrics, per-tag scores, top TF-IDF terms per tag
 ```
 

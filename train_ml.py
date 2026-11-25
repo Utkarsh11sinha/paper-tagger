@@ -55,6 +55,10 @@ def main():
     )
     x_train = vectorizer.fit_transform(texts(train))
     x_val, x_test = vectorizer.transform(texts(val)), vectorizer.transform(texts(test))
+    # Parallel workers get read-only copies of large matrices; sort indices up front so
+    # scikit-learn never needs to modify them in place.
+    for x in (x_train, x_val, x_test):
+        x.sort_indices()
     print(f"TF-IDF vocabulary: {len(vectorizer.vocabulary_)} features")
 
     best = None

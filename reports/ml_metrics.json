@@ -1,0 +1,17 @@
+{
+  "metrics": {
+    "threshold": 0.25,
+    "micro_f1": 0.6658139772843549,
+    "macro_f1": 0.6504884407531517,
+    "samples_f1": 0.6794268296753482,
+    "micro_precision": 0.6418425724995068,
+    "micro_recall": 0.6916454081632653,
+    "hamming_loss": 0.031217740393806155,
+    "precision@1": 0.8203020691871643,
+    "precision@3": 0.47741031646728516,
+    "recall@3": 0.8487414717674255,
+    "exact_match": 0.3041483463964825
+  },
+  "model": "TF-IDF + OneVsRest LogisticRegression",
+  "C": 4.0
+}

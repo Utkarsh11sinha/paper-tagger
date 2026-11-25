@@ -1,0 +1,40 @@
+cs.LG (Machine Learning): learning, neural, regret, training, relu, trained, learned, data, guarantees, forecasting, bandits, tasks
+cs.AI (Artificial Intelligence): ai, agents, agent, llm, model, artificial, llms, flow matching, neural, pp, experiments, ontology
+cs.CV (Computer Vision): image, video, vision, visual, images, segmentation, vision language, 3d, scene, pixel, facial, imagery
+cs.CL (Computation and Language (NLP)): language, llm, text, nlp, llms, language models, words, word, discourse, english, dialogue, corpus
+stat.ML (Machine Learning (Statistics)): learning, data, neural, statistical, synthetic, conformal, regret, causal, guarantees, kernel, bayesian optimization, experiments
+stat.ME (Statistical Methodology): bayesian, data, simulations, statistical, simulation studies, estimation, trial, causal, null, regression, simulation, real data
+cs.CR (Cryptography and Security): security, privacy, attack, attacks, vulnerability, cryptographic, private, cybersecurity, threat, watermarking, cyber, malware
+quant-ph (Quantum Physics): quantum, entanglement, qubits, qubit, spin, classical, states, hamiltonian, photon, measurement, circuit, state
+math.OC (Optimization and Control): optimization, control, optimal, convex, problem, stochastic, gradient, controllability, problems, programming, instances, numerical experiments
+cs.RO (Robotics): robot, robotic, robots, robotics, planning, autonomous, manipulation, humanoid, success, embodied, driving, contact
+eess.SY (Systems and Control (EESS)): control, systems, power, controller, paper, voltage, grid, safety, power systems, data driven, excitation, dynamics
+eess.SP (Signal Processing): signal, eeg, channel, radar, signal processing, antenna, wireless, db, sensing, ecg, receiver, beamforming
+cs.DC (Distributed and Parallel Computing): distributed, gpu, hpc, federated, cloud, parallel, computing, parallelism, resource, nvidia, execution, consensus
+cs.IR (Information Retrieval): retrieval, recommendation, search, recommender, item, document, ranking, documents, recommender systems, user, relevance, web
+cs.HC (Human-Computer Interaction): participants, human, ai, users, design, visualization, user, people, interactive, gaze, eeg, vr
+math.ST (Statistics Theory): statistical, minimax, theory, copulas, estimator, gaussian, regression, asymptotic, estimation, testing, estimators, observed
+cs.SE (Software Engineering): software, code, engineering, software engineering, developers, tool, testing, requirements, code generation, test, repair, coding
+cs.DS (Data Structures and Algorithms): algorithm, algorithms, time, tree, problem, bound, vertex, constant, total, graphs, polynomial, optimal
+eess.IV (Image and Video Processing): image, mri, imaging, video, vision, clinical, segmentation, images, compression, ultrasound, reconstruction, dice
+cs.NI (Networking and Internet Architecture): network, traffic, networks, internet, wireless, 5g, networking, routing, ran, protocol, service, latency
+cs.GT (Game Theory): game, games, strategic, mechanism, equilibrium, agents, incentive, valuations, nash, price, mechanisms, welfare
+econ.EM (Econometrics): economic, empirical, econometric, panel, choice, identification, policy, effects, inference, economics, paper, treatment
+physics.comp-ph (Computational Physics): physics, simulations, materials, physical, calculations, numerical, solver, equations, method, scientific, energy, electromagnetic
+astro-ph.IM (Astronomy Instrumentation and Methods): astronomy, astronomical, telescope, astrophysical, stellar, astrophysics, sky, gravitational, cosmic, galaxy, radio, gravitational wave
+cs.NE (Neural and Evolutionary Computing): evolutionary, neural, genetic, optimization, spiking, neuromorphic, evolution, search, neuron, genetic programming, evolved, architecture
+eess.AS (Audio and Speech Processing): speech, audio, acoustic, sound, music, speaker, microphone, musical, asr, voice, speech enhancement, tts
+cs.SI (Social and Information Networks): social, networks, network, graph, node, community, centrality, posts, online, graphs, opinion, misinformation
+cs.DB (Databases): database, data, query, databases, sql, datasets, queries, relational, join, table, storage, index
+q-bio.QM (Quantitative Methods (Biology)): protein, biological, cell, molecular, biology, drug, sequence, species, gene, phylogenetic, cells, disease
+q-fin.CP (Computational Finance): financial, market, finance, portfolio, pricing, volatility, stock, trading, investment, price, hedging, options
+cs.SD (Sound): audio, speech, music, acoustic, sound, pitch, voice, speaker, musical, recordings, emotion, listener
+cs.CY (Computers and Society): ai, fairness, digital, students, social, online, governance, people, audit, language, moderation, audits
+math.PR (Probability): random, stochastic, probability, brownian, process, markov, prove, let, law, copulas, processes, martingale
+cs.MA (Multiagent Systems): multi agent, agent, agents, games, multi, agentic, agent based, coordination, robots, game, social, market
+cs.IT (Information Theory): information, entropy, codes, optimal, channel, coding, wireless, channels, information theoretic, decoding, error, capacity
+stat.AP (Statistics Applications): bayesian, data, statistical, uncertainty, multivariate, trial, effects, spatial, estimates, health, european, statistically
+math.NA (Numerical Analysis): numerical, numerical experiments, problems, method, equation, error, inverse, approximation, scheme, solver, equations, matrix
+cs.CE (Computational Engineering): financial, asset, value, market, investment, basis, simulation, formulation, portfolio, stocks, prediction, bitcoin
+cond-mat.mtrl-sci (Materials Science): materials, crystal, electronic, electron, phonon, material, calculations, dft, molecular, magnetic, temperature, crystals
+astro-ph.EP (Earth and Planetary Astrophysics): planetary, exoplanet, planets, planet, exoplanets, earth, atmospheric, asteroid, orbital, solar, orbit, km
