@@ -25,7 +25,7 @@ Requires Python 3.10 or newer.
 
 **Windows (PowerShell)**
 ```powershell
-git clone https://github.com/<your-username>/paper-tagger.git
+git clone https://github.com/Utkarsh11sinha/paper-tagger.git
 cd paper-tagger
 py -m venv .venv
 .venv\Scripts\Activate.ps1
@@ -36,7 +36,7 @@ streamlit run app.py
 
 **macOS / Linux**
 ```bash
-git clone https://github.com/<your-username>/paper-tagger.git
+git clone https://github.com/Utkarsh11sinha/paper-tagger.git
 cd paper-tagger
 python3 -m venv .venv
 source .venv/bin/activate
