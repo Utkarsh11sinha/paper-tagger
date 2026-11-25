@@ -44,13 +44,12 @@ def fill_example():
 
 st.title("🏷️ Research Paper Tagger")
 st.caption("Suggests arXiv subject tags for a paper. Compares a classical ML model "
-           "(TF-IDF + Logistic Regression) with a fine-tuned SciBERT model.")
+           "(TF-IDF + Logistic Regression) with a fine-tuned BERT model (MiniLM).")
 
 taggers = get_taggers()
 if not taggers:
-    st.error("No trained models found. Either download shared ones with "
-             "`python hub.py download --repo <user>/<repo>` (or set `HF_REPO_ID` in config.py), "
-             "or train your own with `python train_ml.py` / `python train_bert.py`.")
+    st.error("No trained models found in `models/`. Train them with "
+             "`python train_ml.py` and `python train_bert.py`.")
     st.stop()
 
 with st.sidebar:

@@ -41,7 +41,7 @@ def top_terms(vectorizer, clf, labels, n=12):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--c-grid", type=float, nargs="+", default=[1.0, 4.0, 10.0])
-    ap.add_argument("--max-features", type=int, default=200_000)
+    ap.add_argument("--max-features", type=int, default=50_000)
     args = ap.parse_args()
 
     labels = load_labels()
@@ -81,10 +81,17 @@ def main():
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     (REPORTS_DIR / "ml_top_terms.txt").write_text(top_terms(vectorizer, clf, labels), encoding="utf-8")
 
+    # Keep the saved file small: stop_words_ lists every pruned n-gram and is not
+    # needed for prediction; float32 weights are plenty.
+    vectorizer.stop_words_ = None
+    for est in clf.estimators_:
+        if hasattr(est, "coef_"):
+            est.coef_ = est.coef_.astype(np.float32)
+            est.intercept_ = est.intercept_.astype(np.float32)
     ML_MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump({"vectorizer": vectorizer, "clf": clf, "labels": labels, "threshold": threshold},
-                ML_MODEL_PATH, compress=3)
-    print(f"\nSaved model to {ML_MODEL_PATH}")
+                ML_MODEL_PATH, compress=9)
+    print(f"\nSaved model to {ML_MODEL_PATH} ({ML_MODEL_PATH.stat().st_size / 1e6:.1f} MB)")
 
 
 if __name__ == "__main__":

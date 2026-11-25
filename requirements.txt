@@ -4,7 +4,6 @@
 # CUDA build of torch first (see README).
 torch>=2.2
 transformers>=4.45
-huggingface_hub>=0.24
 scikit-learn>=1.4
 pandas>=2.0
 numpy>=1.26

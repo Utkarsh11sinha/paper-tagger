@@ -1,6 +1,5 @@
-# Large files: data is re-downloadable, models live on the Hugging Face Hub
+# Downloaded data (re-create with fetch_arxiv.py). Trained models in models/ ARE committed.
 data/
-models/
 
 # Python / environments
 __pycache__/

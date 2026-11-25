@@ -1,6 +1,6 @@
 # CPU-only image that runs the Streamlit demo on any machine with Docker.
 #   docker build -t paper-tagger .
-#   docker run -p 8501:8501 -e PAPER_TAGGER_HF_REPO=your-username/paper-tagger paper-tagger
+#   docker run -p 8501:8501 paper-tagger
 # then open http://localhost:8501
 FROM python:3.12-slim
 

@@ -1,13 +1,7 @@
 """Shared paths, constants and human-readable names for arXiv tags."""
-import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-
-# Hugging Face Hub repo that holds the trained models, e.g. "your-username/paper-tagger".
-# Set it here after running `python hub.py upload ...`, or with the environment variable
-# PAPER_TAGGER_HF_REPO. When set, the app downloads the models automatically on first run.
-HF_REPO_ID = os.environ.get("PAPER_TAGGER_HF_REPO", "")
 
 DATA_DIR = ROOT / "data"
 RAW_PATH = DATA_DIR / "raw" / "arxiv_papers.jsonl"

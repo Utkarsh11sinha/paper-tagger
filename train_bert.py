@@ -1,16 +1,17 @@
-"""Model 2 (deep learning): fine-tune SciBERT for multi-label tag prediction.
+"""Model 2 (deep learning): fine-tune a BERT-family transformer for multi-label tags.
 
-SciBERT is BERT pretrained on scientific papers, so it suits arXiv abstracts.
+Default: MiniLM-L6 (sentence-transformers/all-MiniLM-L6-v2), a 22M-parameter
+distilled BERT. It is ~5x smaller and faster than BERT-base, and the saved model
+(fp16, ~45 MB) fits in a normal GitHub repo.
+
 The [CLS] representation feeds a linear layer with one sigmoid output per tag,
 trained with binary cross-entropy. Title and abstract are encoded as a
 sentence pair: [CLS] title [SEP] abstract [SEP].
 
-Defaults are sized for a 4 GB GPU (RTX 3050 Laptop): batch 8 x 4 accumulation
-steps (effective batch 32), max 256 tokens, fp16 mixed precision.
-
 Usage:
     python train_bert.py
-    python train_bert.py --model distilbert-base-uncased --batch-size 16 --grad-accum 2
+    python train_bert.py --model allenai/scibert_scivocab_uncased --batch-size 8 --grad-accum 4 --lr 3e-5
+        # bigger and more accurate, but ~220 MB: too large for GitHub (100 MB limit)
     python train_bert.py --grad-checkpointing      # if you hit CUDA out-of-memory
 """
 import argparse
@@ -70,13 +71,13 @@ def predict(model, loader, device, use_amp):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--model", default="allenai/scibert_scivocab_uncased")
+    ap.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
     ap.add_argument("--max-len", type=int, default=256)
-    ap.add_argument("--batch-size", type=int, default=8)
-    ap.add_argument("--grad-accum", type=int, default=4)
+    ap.add_argument("--batch-size", type=int, default=32)
+    ap.add_argument("--grad-accum", type=int, default=1)
     ap.add_argument("--eval-batch-size", type=int, default=32)
-    ap.add_argument("--epochs", type=int, default=3)
-    ap.add_argument("--lr", type=float, default=3e-5)
+    ap.add_argument("--epochs", type=int, default=4)
+    ap.add_argument("--lr", type=float, default=5e-5)
     ap.add_argument("--weight-decay", type=float, default=0.01)
     ap.add_argument("--warmup-ratio", type=float, default=0.1)
     ap.add_argument("--grad-checkpointing", action="store_true")
@@ -95,7 +96,7 @@ def main():
         print("Device: Apple Silicon GPU (mps)")
     else:
         print("Device: cpu  -- WARNING: no GPU found, training will be very slow. "
-              "Consider Google Colab, or --model distilbert-base-uncased --limit 5000")
+              "Consider a GPU (see README) or a smaller run with --limit 5000")
 
     labels = load_labels()
     train_df, val_df, test_df = load_split("train"), load_split("val"), load_split("test")
@@ -169,7 +170,8 @@ def main():
         if val_metrics["micro_f1"] > best_f1:
             best_f1, best_epoch = val_metrics["micro_f1"], epoch
             out_dir.mkdir(parents=True, exist_ok=True)
-            model.save_pretrained(out_dir)
+            # Save fp16 weights: half the size, same predictions (loaded back as fp32).
+            model.save_pretrained(out_dir, state_dict={k: v.half() for k, v in model.state_dict().items()})
             tokenizer.save_pretrained(out_dir)
             (out_dir / "tagger_config.json").write_text(json.dumps({
                 "labels": labels, "threshold": thr, "max_len": args.max_len, "base_model": args.model,
@@ -184,6 +186,13 @@ def main():
     print_metrics(f"{args.model} fine-tuned (test, best epoch {best_epoch})", metrics)
     save_report("bert", metrics, per_tag_table(y_test, p_test, threshold, labels),
                 {"model": f"{args.model} (fine-tuned)", "best_epoch": best_epoch, "epochs": args.epochs})
+
+    sizes = {f.name: f.stat().st_size / 1e6 for f in out_dir.iterdir() if f.is_file()}
+    print(f"\nSaved model folder: {sum(sizes.values()):.1f} MB")
+    too_big = [n for n, mb in sizes.items() if mb > 100]
+    if too_big:
+        print(f"WARNING: {', '.join(too_big)} exceed GitHub's 100 MB file limit; "
+              "use the default MiniLM model to commit the model to GitHub.")
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 
 from common import clean_text, combine, get_device
-from config import BERT_DIR, HF_REPO_ID, ML_MODEL_PATH, tag_name
+from config import BERT_DIR, ML_MODEL_PATH, tag_name
 
 
 def select_tags(probs, labels, threshold, top_k):
@@ -33,7 +33,7 @@ class MLTagger:
 
 
 class BertTagger:
-    name = "Fine-tuned SciBERT"
+    name = "Fine-tuned BERT"
 
     def __init__(self, path: Path = BERT_DIR):
         import torch
@@ -44,7 +44,7 @@ class BertTagger:
         self.torch = torch
         self.device = get_device()
         self.tokenizer = AutoTokenizer.from_pretrained(path)
-        # Shared checkpoints are stored in fp16 to halve the download; run in fp32 for portability.
+        # Weights are stored in fp16 to halve the file size; run in fp32 for portability.
         self.model = AutoModelForSequenceClassification.from_pretrained(path).float().to(self.device).eval()
 
     def predict_proba(self, title: str, abstract: str) -> np.ndarray:
@@ -59,18 +59,8 @@ class BertTagger:
         return select_tags(self.predict_proba(title, abstract), self.labels, thr, top_k)
 
 
-def models_present() -> bool:
-    return ML_MODEL_PATH.exists() or (BERT_DIR / "tagger_config.json").exists()
-
-
-def load_available(auto_download: bool = True):
-    """Return {"ml": tagger, "bert": tagger} for whichever models exist locally.
-
-    If no models exist and HF_REPO_ID is configured, download them first.
-    """
-    if auto_download and not models_present() and HF_REPO_ID:
-        from hub import download
-        download(HF_REPO_ID)
+def load_available():
+    """Return {"ml": tagger, "bert": tagger} for whichever models exist in models/."""
     taggers = {}
     if ML_MODEL_PATH.exists():
         taggers["ml"] = MLTagger()
