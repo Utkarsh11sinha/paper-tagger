@@ -1,0 +1,7 @@
+.git
+.venv
+venv
+data
+models
+__pycache__
+*.pyc

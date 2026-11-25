@@ -1,0 +1,21 @@
+# Large files: data is re-downloadable, models live on the Hugging Face Hub
+data/
+models/
+
+# Python / environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.streamlit/secrets.toml
