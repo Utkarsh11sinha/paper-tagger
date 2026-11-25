@@ -28,7 +28,7 @@ def main():
     wanted = ["ml", "bert"] if args.model == "both" else [args.model]
     missing = [m for m in wanted if m not in taggers]
     if missing:
-        print(f"Not trained yet: {', '.join(missing)} (run train_ml.py / train_bert.py)")
+        print(f"Not trained yet: {', '.join(missing)} (run ml_model/train.py / dl_model/train.py)")
     for key in wanted:
         if key not in taggers:
             continue

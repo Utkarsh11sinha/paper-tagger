@@ -5,7 +5,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from config import LABELS_PATH, PROCESSED_DIR
+from shared.config import LABELS_PATH, PROCESSED_DIR
 
 _MATH_RE = re.compile(r"\$[^$]*\$")
 _WS_RE = re.compile(r"\s+")
@@ -45,7 +45,7 @@ def amp_context(device, enabled: bool):
 def load_split(name: str) -> pd.DataFrame:
     path = PROCESSED_DIR / f"{name}.jsonl"
     if not path.exists():
-        raise SystemExit(f"{path} not found. Run prepare_data.py first.")
+        raise SystemExit(f"{path} not found. Run data_prep/prepare_data.py first.")
     return pd.read_json(path, lines=True)
 
 
@@ -61,3 +61,11 @@ def binarize(tag_lists, labels) -> np.ndarray:
             if t in index:
                 y[row, index[t]] = 1.0
     return y
+
+
+def select_tags(probs, labels, threshold, top_k):
+    """Tags above the threshold, best first, capped at top_k; never empty."""
+    from shared.config import tag_name
+    order = np.argsort(-probs)
+    chosen = [i for i in order[:top_k] if probs[i] >= threshold] or [order[0]]
+    return [{"tag": labels[i], "name": tag_name(labels[i]), "score": float(probs[i])} for i in chosen]

@@ -5,9 +5,14 @@ The regularisation strength C and the decision threshold are tuned on the
 validation split; the final scores are reported on the test split.
 
 Usage:
-    python train_ml.py
-    python train_ml.py --c-grid 2 5 10 20
+    python ml_model/train.py
+    python ml_model/train.py --c-grid 2 5 10 20
 """
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # allow `python <folder>/<script>.py`
+
 import argparse
 import time
 
@@ -18,9 +23,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 from sklearn.multiclass import OneVsRestClassifier
 
-from common import binarize, combine, load_labels, load_split
-from config import ML_MODEL_PATH, REPORTS_DIR, tag_name
-from metrics import evaluate, per_tag_table, predict_from_probs, print_metrics, save_report, tune_threshold
+from shared.common import binarize, combine, load_labels, load_split
+from shared.config import ML_MODEL_PATH, ML_REPORTS_DIR, tag_name
+from shared.metrics import evaluate, per_tag_table, predict_from_probs, print_metrics, save_report, tune_threshold
 
 
 def texts(df):
@@ -79,11 +84,10 @@ def main():
     p_test = clf.predict_proba(x_test)
     metrics = evaluate(y_test, p_test, threshold)
     print_metrics("TF-IDF + Logistic Regression (test)", metrics)
-    save_report("ml", metrics, per_tag_table(y_test, p_test, threshold, labels),
+    save_report(ML_REPORTS_DIR, metrics, per_tag_table(y_test, p_test, threshold, labels),
                 {"model": "TF-IDF + OneVsRest LogisticRegression", "C": best_c})
 
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    (REPORTS_DIR / "ml_top_terms.txt").write_text(top_terms(vectorizer, clf, labels), encoding="utf-8")
+    (ML_REPORTS_DIR / "top_terms.txt").write_text(top_terms(vectorizer, clf, labels), encoding="utf-8")
 
     # Keep the saved file small: stop_words_ lists every pruned n-gram and is not
     # needed for prediction; float32 weights are plenty.

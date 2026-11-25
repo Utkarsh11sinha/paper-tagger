@@ -1,11 +1,12 @@
 """Multi-label evaluation helpers shared by both models."""
 import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score, hamming_loss, precision_recall_fscore_support, precision_score, recall_score
 
-from config import REPORTS_DIR, tag_name
+from shared.config import tag_name
 
 
 def predict_from_probs(y_prob: np.ndarray, threshold: float) -> np.ndarray:
@@ -63,11 +64,11 @@ def per_tag_table(y_true, y_prob, threshold, labels) -> pd.DataFrame:
     }).sort_values("f1", ascending=False)
 
 
-def save_report(prefix: str, metrics: dict, table: pd.DataFrame, extra: dict | None = None):
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+def save_report(report_dir: Path, metrics: dict, table: pd.DataFrame, extra: dict | None = None):
+    report_dir.mkdir(parents=True, exist_ok=True)
     payload = {"metrics": {k: float(v) for k, v in metrics.items()}, **(extra or {})}
-    (REPORTS_DIR / f"{prefix}_metrics.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    table.to_csv(REPORTS_DIR / f"{prefix}_per_tag.csv", index=False, float_format="%.4f")
+    (report_dir / "metrics.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    table.to_csv(report_dir / "per_tag.csv", index=False, float_format="%.4f")
 
 
 def print_metrics(title: str, metrics: dict):

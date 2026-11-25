@@ -1,23 +1,27 @@
 """Download paper titles, abstracts and categories from the public arXiv API.
 
 Usage:
-    python fetch_arxiv.py                      # ~2000 recent papers per category
-    python fetch_arxiv.py --per-category 500   # smaller / faster
+    python data_prep/fetch_arxiv.py                      # ~2000 recent papers per category
+    python data_prep/fetch_arxiv.py --per-category 500   # smaller / faster
 
 The script appends to data/raw/arxiv_papers.jsonl and skips papers it already
 has, so it can be stopped and restarted. arXiv asks clients to wait ~3 seconds
 between requests; please keep the default delay.
 """
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # allow `python <folder>/<script>.py`
+
 import argparse
 import json
 import re
 import time
 import xml.etree.ElementTree as ET
-from pathlib import Path
 
 import requests
 
-from config import DEFAULT_CATEGORIES, RAW_PATH
+from shared.config import DEFAULT_CATEGORIES, RAW_PATH
 
 API_URL = "https://export.arxiv.org/api/query"
 NS = {"a": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}

@@ -12,10 +12,22 @@ Two models are trained on the same data and compared:
 | Classifier | One-vs-rest Logistic Regression (one per tag) | Fine-tuned transformer + linear layer, sigmoid per tag, BCE loss |
 | Tuning | `C` grid search + decision threshold on validation | Best epoch + decision threshold on validation |
 | Parameters | ~2M weights | 22M |
-| Size on disk | a few MB | ~46 MB (fp16) |
-| Script | `train_ml.py` | `train_bert.py` |
+| Size on disk | 8 MB | 46 MB (fp16) |
+| Folder | [`ml_model/`](ml_model/) | [`dl_model/`](dl_model/) |
 
-**The trained models are included in this repo** (`models/`), so you can use them
+### Test results (5,231 papers)
+
+| Metric | ML: TF-IDF + LogReg | DL: fine-tuned MiniLM |
+|---|---:|---:|
+| Micro F1 | **0.666** | 0.627 |
+| Macro F1 | **0.650** | 0.528 |
+| Precision@1 (top tag correct) | **0.820** | 0.753 |
+| Recall@3 (true tags in top 3) | **0.849** | 0.790 |
+| Hamming loss (lower is better) | **0.031** | 0.033 |
+
+Full table: [`reports/comparison.md`](reports/comparison.md). Each model folder has its own README with details.
+
+**The trained models are included in this repo** (`ml_model/model/` and `dl_model/model/`), so you can use them
 right after cloning. Both are small enough for GitHub and run on any computer
 (Windows, macOS, Linux) without a GPU.
 
@@ -78,8 +90,8 @@ If `cu128` doesn't match your setup, pick the CUDA build at pytorch.org → Get 
 ### 2. Get the data
 
 ```bash
-python fetch_arxiv.py
-python prepare_data.py
+python data_prep/fetch_arxiv.py
+python data_prep/prepare_data.py
 ```
 
 `fetch_arxiv.py` downloads ~2000 recent papers for each of 30 categories (~45–55k papers
@@ -91,17 +103,17 @@ quicker run.
 data 80/10/10 and prints dataset statistics.
 
 *Alternative data:* download the Kaggle dataset "arXiv Paper Abstracts" (`arxiv_data.csv`)
-and run `python prepare_data.py --kaggle-csv arxiv_data.csv`.
+and run `python data_prep/prepare_data.py --kaggle-csv arxiv_data.csv`.
 
 ### 3. Train and compare
 
 ```bash
-python train_ml.py      # a few minutes on any CPU
-python train_bert.py    # GPU recommended
-python compare.py       # side-by-side test metrics -> reports/comparison.md
+python ml_model/train.py      # Model 1: a few minutes on any CPU
+python dl_model/train.py      # Model 2: GPU recommended
+python compare.py                   # side-by-side test metrics -> reports/comparison.md
 ```
 
-`train_bert.py` options:
+`dl_model/train.py` options:
 
 - CUDA out of memory: `--batch-size 16`, `--max-len 192`, or `--grad-checkpointing`
 - Quick check that everything works: `--limit 500 --epochs 1`
@@ -111,35 +123,49 @@ python compare.py       # side-by-side test metrics -> reports/comparison.md
 ### 4. Publish the new models
 
 ```bash
-git add models reports
+git add ml_model dl_model reports
 git commit -m "Retrain models"
 git push
 ```
 
-`data/` is ignored by git; `models/` and `reports/` are committed.
+`data/` is ignored by git; the model folders and `reports/` are committed.
 
-> Note: `models/ml_model/tfidf_logreg.joblib` is a pickle file. Only load model files from sources you trust.
+> Note: `ml_model/model/tfidf_logreg.joblib` is a pickle file. Only load model files from sources you trust.
 
 ---
 
 ## Project layout
 
 ```
-config.py         paths, default categories, tag names
-fetch_arxiv.py    download papers from the public arXiv API
-prepare_data.py   clean text, choose tag set, train/val/test split, EDA printout
-common.py         text cleaning, data loading, device selection (CUDA / MPS / CPU)
-metrics.py        multi-label metrics and threshold tuning
-train_ml.py       Model 1: TF-IDF + Logistic Regression
-train_bert.py     Model 2: BERT-family fine-tuning (PyTorch)
-compare.py        side-by-side test metrics
-tagger.py         loads the models, suggest(title, abstract)
-suggest_tags.py   command-line tag suggestions
-app.py            Streamlit demo
-Dockerfile        CPU image for the demo
-models/ml_model/  Model 1 files: TF-IDF + Logistic Regression (committed)
-models/dl_model/  Model 2 files: fine-tuned MiniLM weights, tokenizer, config (committed)
-reports/          test metrics, per-tag scores, top TF-IDF terms per tag
+ml_model/                 MODEL 1: TF-IDF + Logistic Regression
+  train.py                  training + evaluation
+  predict.py                MLTagger (loads the model, suggests tags)
+  model/                    tfidf_logreg.joblib (trained model, 8 MB)
+  reports/                  metrics.json, per_tag.csv, top_terms.txt
+  README.md
+
+dl_model/                 MODEL 2: fine-tuned BERT (MiniLM)
+  train.py                  fine-tuning + evaluation (PyTorch)
+  predict.py                BertTagger (loads the model, suggests tags)
+  model/                    model.safetensors, tokenizer, configs (46 MB)
+  reports/                  metrics.json, per_tag.csv
+  README.md
+
+data_prep/                shared data pipeline
+  fetch_arxiv.py            download papers from the arXiv API
+  prepare_data.py           clean, choose tags, train/val/test split
+
+shared/                   code used by both models
+  config.py                 paths, categories, tag names
+  common.py                 text cleaning, data loading, device selection
+  metrics.py                multi-label metrics, threshold tuning
+
+reports/comparison.md     side-by-side results of both models
+app.py                    Streamlit demo (both models side by side)
+suggest_tags.py           command-line tag suggestions
+compare.py                builds reports/comparison.md
+tagger.py                 loads whichever models are trained
+Dockerfile, requirements.txt
 ```
 
 ## Metrics reported
@@ -148,7 +174,7 @@ reports/          test metrics, per-tag scores, top TF-IDF terms per tag
 - **Precision@1, Precision@3, Recall@3**: quality of the ranked tag suggestions
 - **Hamming loss**: fraction of wrong tag decisions (lower is better)
 - **Exact match**: the predicted tag set is exactly right
-- Per-tag precision / recall / F1 in `reports/*_per_tag.csv`
+- Per-tag precision / recall / F1 in `ml_model/reports/per_tag.csv` and `dl_model/reports/per_tag.csv`
 
 Every paper always receives at least one tag (the highest-scoring one), even if no
 score passes the threshold.

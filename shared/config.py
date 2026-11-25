@@ -1,17 +1,24 @@
 """Shared paths, constants and human-readable names for arXiv tags."""
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]  # project root
 
 DATA_DIR = ROOT / "data"
 RAW_PATH = DATA_DIR / "raw" / "arxiv_papers.jsonl"
 PROCESSED_DIR = DATA_DIR / "processed"
 LABELS_PATH = PROCESSED_DIR / "labels.json"
 
-MODELS_DIR = ROOT / "models"
-ML_MODEL_PATH = MODELS_DIR / "ml_model" / "tfidf_logreg.joblib"
-BERT_DIR = MODELS_DIR / "dl_model"
+# Model 1: TF-IDF + Logistic Regression
+ML_DIR = ROOT / "ml_model"
+ML_MODEL_PATH = ML_DIR / "model" / "tfidf_logreg.joblib"
+ML_REPORTS_DIR = ML_DIR / "reports"
 
+# Model 2: fine-tuned BERT (MiniLM)
+DL_DIR = ROOT / "dl_model"
+BERT_DIR = DL_DIR / "model"
+DL_REPORTS_DIR = DL_DIR / "reports"
+
+# Side-by-side comparison of both models
 REPORTS_DIR = ROOT / "reports"
 
 SEED = 42

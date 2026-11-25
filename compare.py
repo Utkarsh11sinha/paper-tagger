@@ -1,7 +1,7 @@
 """Print and save a side-by-side comparison of the two models' test metrics."""
 import json
 
-from config import REPORTS_DIR
+from shared.config import DL_REPORTS_DIR, ML_REPORTS_DIR, REPORTS_DIR
 
 ROWS = [
     ("micro_f1", "Micro F1"), ("macro_f1", "Macro F1"), ("samples_f1", "Samples F1"),
@@ -12,13 +12,13 @@ ROWS = [
 ]
 
 
-def load(prefix):
-    path = REPORTS_DIR / f"{prefix}_metrics.json"
+def load(report_dir):
+    path = report_dir / "metrics.json"
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
 def comparison_markdown():
-    ml, bert = load("ml"), load("bert")
+    ml, bert = load(ML_REPORTS_DIR), load(DL_REPORTS_DIR)
     if not (ml or bert):
         return None
     cols = [r for r in (ml, bert) if r]
@@ -34,6 +34,7 @@ def main():
     if md is None:
         raise SystemExit("No reports found. Train the models first.")
     print(md)
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     (REPORTS_DIR / "comparison.md").write_text("# Test-set comparison\n\n" + md + "\n", encoding="utf-8")
     print(f"\nSaved to {REPORTS_DIR / 'comparison.md'}")
 

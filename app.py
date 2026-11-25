@@ -48,8 +48,8 @@ st.caption("Suggests arXiv subject tags for a paper. Compares a classical ML mod
 
 taggers = get_taggers()
 if not taggers:
-    st.error("No trained models found in `models/`. Train them with "
-             "`python train_ml.py` and `python train_bert.py`.")
+    st.error("No trained models found in `ml_model/model/` or `dl_model/model/`. Train them with "
+             "`python ml_model/train.py` and `python dl_model/train.py`.")
     st.stop()
 
 with st.sidebar:

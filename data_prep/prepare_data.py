@@ -1,10 +1,15 @@
 """Clean the raw papers, choose the tag set and make train/val/test splits.
 
 Usage:
-    python prepare_data.py                         # from fetch_arxiv.py output
-    python prepare_data.py --kaggle-csv arxiv_data.csv
+    python data_prep/prepare_data.py                         # from fetch_arxiv.py output
+    python data_prep/prepare_data.py --kaggle-csv arxiv_data.csv
         # alternative: Kaggle "arXiv Paper Abstracts" (columns: titles, summaries, terms)
 """
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # allow `python <folder>/<script>.py`
+
 import argparse
 import ast
 import json
@@ -13,8 +18,8 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 
-from common import clean_text
-from config import LABELS_PATH, PROCESSED_DIR, RAW_PATH, SEED, tag_name
+from shared.common import clean_text
+from shared.config import LABELS_PATH, PROCESSED_DIR, RAW_PATH, SEED, tag_name
 
 
 def load_raw(args) -> pd.DataFrame:
@@ -27,7 +32,7 @@ def load_raw(args) -> pd.DataFrame:
         })
     else:
         if not RAW_PATH.exists():
-            raise SystemExit(f"{RAW_PATH} not found. Run fetch_arxiv.py first.")
+            raise SystemExit(f"{RAW_PATH} not found. Run data_prep/fetch_arxiv.py first.")
         df = pd.read_json(RAW_PATH, lines=True)
         df = df.rename(columns={"categories": "tags"})[["title", "abstract", "tags"]]
     return df

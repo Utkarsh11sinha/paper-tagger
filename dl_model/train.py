@@ -9,16 +9,20 @@ trained with binary cross-entropy. Title and abstract are encoded as a
 sentence pair: [CLS] title [SEP] abstract [SEP].
 
 Usage:
-    python train_bert.py
-    python train_bert.py --model allenai/scibert_scivocab_uncased --batch-size 8 --grad-accum 4 --lr 3e-5
+    python dl_model/train.py
+    python dl_model/train.py --model allenai/scibert_scivocab_uncased --batch-size 8 --grad-accum 4 --lr 3e-5
         # bigger and more accurate, but ~220 MB: too large for GitHub (100 MB limit)
-    python train_bert.py --grad-checkpointing      # if you hit CUDA out-of-memory
+    python dl_model/train.py --grad-checkpointing      # if you hit CUDA out-of-memory
 """
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # allow `python <folder>/<script>.py`
+
 import argparse
 import json
 import math
 import time
-from pathlib import Path
 
 import numpy as np
 import torch
@@ -26,9 +30,9 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm.auto import tqdm
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_linear_schedule_with_warmup
 
-from common import amp_context, binarize, get_device, load_labels, load_split
-from config import BERT_DIR, SEED
-from metrics import evaluate, per_tag_table, print_metrics, save_report, tune_threshold
+from shared.common import amp_context, binarize, get_device, load_labels, load_split
+from shared.config import BERT_DIR, DL_REPORTS_DIR, SEED
+from shared.metrics import evaluate, per_tag_table, print_metrics, save_report, tune_threshold
 
 
 class PaperDataset(Dataset):
@@ -184,7 +188,7 @@ def main():
     y_test, p_test = predict(model, test_loader, device, use_amp)
     metrics = evaluate(y_test, p_test, threshold)
     print_metrics(f"{args.model} fine-tuned (test, best epoch {best_epoch})", metrics)
-    save_report("bert", metrics, per_tag_table(y_test, p_test, threshold, labels),
+    save_report(DL_REPORTS_DIR, metrics, per_tag_table(y_test, p_test, threshold, labels),
                 {"model": f"{args.model} (fine-tuned)", "best_epoch": best_epoch, "epochs": args.epochs})
 
     sizes = {f.name: f.stat().st_size / 1e6 for f in out_dir.iterdir() if f.is_file()}
